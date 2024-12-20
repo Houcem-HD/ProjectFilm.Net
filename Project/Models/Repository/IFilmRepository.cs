@@ -10,5 +10,7 @@
         Task UpdateFilm(int id, Film film);
 
         Task DeleteFilm(int id);
+        Task<string> UploadFilmPosterAsync(int filmId, IFormFile file); 
     }
 }
+

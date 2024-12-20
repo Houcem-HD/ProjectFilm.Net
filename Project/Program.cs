@@ -15,42 +15,40 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(swagger =>
 {
-//This is to generate the Default UI of Swagger Documentation
-swagger.SwaggerDoc("v1", new OpenApiInfo
-{
-    Version = "v1",
-    Title = "ASP.NET 8 Web API",
-    Description = " IIT Proj"
-});
-// To Enable authorization using Swagger (JWT)
-swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-{
-    Name = "Authorization",
-    Type = SecuritySchemeType.ApiKey,
-    Scheme = "Bearer",
-    BearerFormat = "JWT",
-    In = ParameterLocation.Header,
-    Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample:\"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
-});
+    swagger.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "ASP.NET 8 Web API",
+        Description = "IIT Proj"
+    });
+
+    // To Enable authorization using Swagger (JWT)
+    swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample:\"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+    });
     swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
-{
-{
-new OpenApiSecurityScheme
-{
-Reference = new OpenApiReference
-{
-Type = ReferenceType.SecurityScheme,
-Id = "Bearer"
-}
-},
-new string[] {}
-}
-});
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+            },
+            new string[] {}
+        }
+    });
 });
 
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
@@ -60,10 +58,12 @@ builder.Services.AddScoped<ILanguesRepository, LanguesRepository>();
 builder.Services.AddScoped<IRealisateursRepository, RealisateursRepository>();
 builder.Services.AddScoped<IFilmRepository, FilmRepository>();
 
-var cnx = builder.Configuration.GetConnectionString("dbcon");
-builder.Services.AddDbContext<Context>(
-    options => options.UseSqlServer(cnx)
-    );
+// Register the DbContext with MySQL
+builder.Services.AddDbContext<Context>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("Dbcon"),
+        MySqlServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Dbcon"))
+    ));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<Context>()
@@ -112,10 +112,15 @@ app.UseCors("AllowFrontend");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API V1");
+        options.RoutePrefix = "docs";  // Swagger UI route
+    });
 }
 
 app.UseRouting();
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 

@@ -16,21 +16,21 @@ namespace Project.Controllers
         {
             this.repository = repository;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             List<Film> f = await repository.GetFilm();
-
             return Ok(f);
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByID(int id)
         {
-            Film l
-                 = await repository.GetFilmbyID(id);
-
+            Film l = await repository.GetFilmbyID(id);
             return Ok(l);
         }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Film film)
         {
@@ -41,8 +41,7 @@ namespace Project.Controllers
             if (f == null)
                 return BadRequest("Problem adding the film");
 
-            return CreatedAtAction(nameof(GetByID),
-                new { id = f.FilmID }, f);
+            return CreatedAtAction(nameof(GetByID), new { id = f.FilmID }, f);
         }
 
         [HttpDelete("{id}")]
@@ -55,8 +54,8 @@ namespace Project.Controllers
             }
             await repository.DeleteFilm(id);
             return Ok(film);
-
         }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Film updatedfilm)
         {
@@ -69,6 +68,29 @@ namespace Project.Controllers
             await repository.UpdateFilm(id, updatedfilm);
 
             return Ok(updatedfilm);
+        }
+
+        [HttpPost("uploadPoster/{id}")]
+        public async Task<IActionResult> UploadFilmPoster(int id, IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { message = "No file selected." });
+            }
+
+            try
+            {
+                var uploadedFilePath = await repository.UploadFilmPosterAsync(id, file);
+                return Ok(new { message = "Film poster updated successfully.", posterUrl = uploadedFilePath });
+            }
+            catch (FileNotFoundException)
+            {
+                return NotFound(new { message = "Film not found." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Internal server error: {ex.Message}" });
+            }
         }
     }
 }

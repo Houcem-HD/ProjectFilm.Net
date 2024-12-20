@@ -15,14 +15,14 @@ namespace Project.Models
         [Required]
         public string Description { get; set; }
 
-        public int DateCreated { get; set; }
+        public DateTime DateCreated { get; set; }
 
         public int Duree { get; set; }
 
         public string? Poster { get; set; }
 
         // Foreign Key for Categories
-        [ForeignKey("Categories")]  // Foreign key for Categories
+        [ForeignKey("Categories")]
         public int CategorieID { get; set; }
 
         // Foreign Keys for Acteurs
@@ -33,15 +33,15 @@ namespace Project.Models
         public int ActeurSID { get; set; }
 
         // Foreign Key for Editeurs
-        [ForeignKey("Editeurs")]  // Foreign key for EditeurID
+        [ForeignKey("Editeurs")]
         public int EditeurID { get; set; }
 
         // Foreign Key for Langues
-        [ForeignKey("Langues")]  // Foreign key for LangueID
+        [ForeignKey("Langues")]
         public int LangueID { get; set; }
 
         // Foreign Key for Realisateurs
-        [ForeignKey("Realisateurs")]  // Foreign key for RealisateurID
+        [ForeignKey("Realisateurs")]
         public int RealisateurID { get; set; }
     }
 }
