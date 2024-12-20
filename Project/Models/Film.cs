@@ -15,7 +15,7 @@ namespace Project.Models
         [Required]
         public string Description { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public int DateCreated { get; set; }
 
         public int Duree { get; set; }
 

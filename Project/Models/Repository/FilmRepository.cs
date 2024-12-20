@@ -64,17 +64,16 @@ namespace Project.Models.Repository
             await context.SaveChangesAsync();
         }
 
-        public async Task<string> UploadFilmPosterAsync(int filmId, IFormFile file)
+        public async Task<string> UploadFilmPosterAsync(IFormFile file)
         {
-            var film = await context.films.FindAsync(filmId);
-            if (film == null)
+            if (file == null || file.Length == 0)
             {
-                throw new FileNotFoundException("Film not found.");
+                throw new ArgumentException("The file is empty or null.");
             }
 
-            if (file == null || file.Length == 0 || !new[] { "image/png", "image/jpeg", "image/jpg" }.Contains(file.ContentType))
+            if (!new[] { "image/png", "image/jpeg", "image/jpg" }.Contains(file.ContentType))
             {
-                throw new Exception("Invalid file.");
+                throw new ArgumentException("Invalid file type. Only PNG, JPEG, and JPG are allowed.");
             }
 
             var uploadsDirectory = Path.Combine(_env.ContentRootPath, "wwwroot", "images");
@@ -87,16 +86,22 @@ namespace Project.Models.Repository
             var fileName = $"{Guid.NewGuid()}{fileExtension}";
             var fullFilePath = Path.Combine(uploadsDirectory, fileName);
 
-            using (var stream = new FileStream(fullFilePath, FileMode.Create))
+            try
             {
-                await file.CopyToAsync(stream);
+                using (var stream = new FileStream(fullFilePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new IOException("An error occurred while uploading the file.", ex);
             }
 
-            film.Poster = $"images/{fileName}";
-            context.Entry(film).State = EntityState.Modified;
-            await context.SaveChangesAsync();
-
-            return film.Poster;
+            // Return the relative path to the uploaded file
+            var relativePath = $"/images/{fileName}";
+            return relativePath;
         }
+
     }
 }

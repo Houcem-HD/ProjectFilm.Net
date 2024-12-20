@@ -7,7 +7,7 @@ namespace Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+
     public class FilmController : ControllerBase
     {
         private readonly IFilmRepository repository;
@@ -70,8 +70,8 @@ namespace Project.Controllers
             return Ok(updatedfilm);
         }
 
-        [HttpPost("uploadPoster/{id}")]
-        public async Task<IActionResult> UploadFilmPoster(int id, IFormFile file)
+        [HttpPost("uploadPoster")]
+        public async Task<IActionResult> UploadFilmPoster(IFormFile file)
         {
             if (file == null || file.Length == 0)
             {
@@ -80,7 +80,7 @@ namespace Project.Controllers
 
             try
             {
-                var uploadedFilePath = await repository.UploadFilmPosterAsync(id, file);
+                var uploadedFilePath = await repository.UploadFilmPosterAsync(file);
                 return Ok(new { message = "Film poster updated successfully.", posterUrl = uploadedFilePath });
             }
             catch (FileNotFoundException)
