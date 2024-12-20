@@ -1,0 +1,69 @@
+# Visual Studio/VS Code specific files
+.vs/
+.vscode/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+Debug/
+Release/
+TestResults/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+*.lock.json
+project.lock.json
+
+# Logs
+*.log
+*.tlog
+
+# Environment variables
+*.env
+
+# Rider specific
+.idea/
+
+# Resharper settings
+_ReSharper*/
+
+# Backup files
+*.bak
+*~.nib
+*.swp
+*.swo
+
+# Generated files
+*.dll
+*.exe
+*.pdb
+*.mdb
+*.class
+
+# IIS
+IISExpress/
+
+# Web specific
+node_modules/
+wwwroot/lib/
+dist/
+
+# macOS
+.DS_Store
+
+# Windows Thumbnails
+Thumbs.db
+
+# JetBrains Rider temp files
+.idea/
+
+# Local tooling
+*.vsconfig
